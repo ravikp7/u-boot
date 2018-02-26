@@ -11,6 +11,22 @@
 #ifndef _BOARD_H_
 #define _BOARD_H_
 
+struct am335x_cape_eeprom_id {
+	unsigned int header;
+	char eeprom_rev[2];
+	char board_name[32];
+	char version[4];
+	char manufacture[16];
+	char part_number[16];
+	char number_of_pins[2];
+	char serial_number[12];
+	char pin_usage[140];
+	char vdd_3v3exp[ 2];
+	char vdd_5v[ 2];
+	char sys_5v[2];
+	char dc_supplied[2];
+};
+
 /**
  * AM335X (EMIF_4D) EMIF REG_COS_COUNT_1, REG_COS_COUNT_2, and
  * REG_PR_OLD_COUNT values to avoid LCDC DMA FIFO underflows and Frame
@@ -24,6 +40,16 @@
 #define EMIF_OCP_CONFIG_BEAGLEBONE_BLACK       0x00141414
 #define EMIF_OCP_CONFIG_AM335X_EVM             0x003d3d3d
 
+static inline int board_is_pb(void)
+{
+	return board_ti_is("A335PBGL");
+}
+
+static inline int board_is_beaglelogic(void)
+{
+	return board_ti_is("A335BLGC");
+}
+
 static inline int board_is_bone(void)
 {
 	return board_ti_is("A335BONE");
@@ -34,14 +60,50 @@ static inline int board_is_bone_lt(void)
 	return board_ti_is("A335BNLT");
 }
 
+static inline int board_is_bbbw(void)
+{
+	return board_is_bone_lt() && !strncmp(board_ti_get_rev(), "BW", 2);
+}
+
+static inline int board_is_blue(void)
+{
+	return board_is_bone_lt() && !strncmp(board_ti_get_rev(), "BLA", 3);
+}
+
 static inline int board_is_bbg1(void)
 {
 	return board_is_bone_lt() && !strncmp(board_ti_get_rev(), "BBG1", 4);
 }
 
+static inline int board_is_bone_lt_enhanced(void)
+{
+	return board_is_bone_lt() && !strncmp(board_ti_get_rev(), "SE", 2);
+}
+
+static inline int board_is_m10a(void)
+{
+	return board_is_bone_lt() && !strncmp(board_ti_get_rev(), "M10A", 4);
+}
+
+//Element14 BeagleBone Black Industrial:
+static inline int board_is_e14bbbi(void)
+{
+	return board_is_bone_lt() && !strncmp(board_ti_get_rev(), "EIA0", 4);
+}
+
+static inline int board_is_marsboard(void)
+{
+	return board_is_bone_lt() && !strncmp(board_ti_get_rev(), "00A5", 4);
+}
+
+static inline int board_is_os00(void)
+{
+	return board_is_bone_lt() && !strncmp(board_ti_get_rev(), "OS00", 4);
+}
+
 static inline int board_is_beaglebonex(void)
 {
-	return board_is_bone() || board_is_bone_lt() || board_is_bbg1();
+	return board_is_pb() || board_is_bone() || (board_is_bone_lt() && !board_is_marsboard()) || board_is_e14bbbi() || board_is_bbg1() || board_is_beaglelogic() || board_is_os00();
 }
 
 static inline int board_is_evm_sk(void)
@@ -83,5 +145,6 @@ void enable_uart3_pin_mux(void);
 void enable_uart4_pin_mux(void);
 void enable_uart5_pin_mux(void);
 void enable_i2c0_pin_mux(void);
+void enable_i2c2_pin_mux(void);
 void enable_board_pin_mux(void);
 #endif
