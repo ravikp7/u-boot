@@ -426,3 +426,6 @@
 #endif
 
 #endif	/* ! __CONFIG_AM335X_EVM_H */
+#if defined(CONFIG_CMD_USB_MASS_STORAGE)
+#define CONFIG_USB_FUNCTION_MASS_STORAGE
+#endif
